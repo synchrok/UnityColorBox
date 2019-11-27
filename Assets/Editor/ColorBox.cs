@@ -48,16 +48,18 @@ public class ColorBox : EditorWindow {
 
         _hexCode = EditorGUILayout.TextField("Input Hex Color", _hexCode, new GUILayoutOption[]{});
 
-        var hex = _hexCode;
-        if (!hex.StartsWith("#"))
-            hex = $"#{hex}";
+        if(_hexCode != null){
+            var hex = _hexCode;
+            if (!hex.StartsWith("#"))
+                hex = $"#{hex}";
 
-        if (ColorUtility.TryParseHtmlString(hex, out var color)) {
-            EditorGUILayout.ColorField("Color", color);
-            EditorGUILayout.TextField("Result (Color)", $"new Color({color.r:0.###}f, {color.g:0.###}f, {color.b:0.###}f, {color.a:0.###}f)", new GUILayoutOption[]{});
-            EditorGUILayout.TextField("Result (Color32)",
-                $"new Color32({Mathf.RoundToInt(color.r * 255f)}, {Mathf.RoundToInt(color.g * 255f)}, {Mathf.RoundToInt(color.b * 255f)}, {Mathf.RoundToInt(color.a * 255f)})",
-                new GUILayoutOption[] { });
+            if (ColorUtility.TryParseHtmlString(hex, out var color)) {
+                EditorGUILayout.ColorField("Color", color);
+                EditorGUILayout.TextField("Result (Color)", $"new Color({color.r:0.###}f, {color.g:0.###}f, {color.b:0.###}f, {color.a:0.###}f)", new GUILayoutOption[]{});
+                EditorGUILayout.TextField("Result (Color32)",
+                    $"new Color32({Mathf.RoundToInt(color.r * 255f)}, {Mathf.RoundToInt(color.g * 255f)}, {Mathf.RoundToInt(color.b * 255f)}, {Mathf.RoundToInt(color.a * 255f)})",
+                    new GUILayoutOption[] { });
+            }
         }
 
         GUI.color = originColor;
