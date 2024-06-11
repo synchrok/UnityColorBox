@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class ColorBox : EditorWindow {
     private string _hexCode;
+    private string _rValue;
+    private string _gValue;
+    private string _bValue;
 
     [MenuItem("Window/ColorBox")]
     static void Open() {
@@ -46,19 +49,33 @@ public class ColorBox : EditorWindow {
         EditorGUILayout.Space();
         EditorGUILayout.Space();
 
-        _hexCode = EditorGUILayout.TextField("Input Hex Color", _hexCode, new GUILayoutOption[]{});
+        _hexCode = EditorGUILayout.TextField("Input Hex Color", _hexCode);
 
-        if(_hexCode != null){
+        EditorGUILayout.BeginHorizontal();
+        EditorGUILayout.LabelField("RGB");
+        _rValue = EditorGUILayout.TextField(_rValue, GUILayout.ExpandWidth(true));
+        _gValue = EditorGUILayout.TextField(_gValue, GUILayout.ExpandWidth(true));
+        _bValue = EditorGUILayout.TextField(_bValue, GUILayout.ExpandWidth(true));
+        EditorGUILayout.EndHorizontal();
+
+        if (!string.IsNullOrEmpty(_hexCode)) {
             var hex = _hexCode;
             if (!hex.StartsWith("#"))
                 hex = $"#{hex}";
 
             if (ColorUtility.TryParseHtmlString(hex, out var color)) {
                 EditorGUILayout.ColorField("Color", color);
-                EditorGUILayout.TextField("Result (Color)", $"new Color({color.r:0.###}f, {color.g:0.###}f, {color.b:0.###}f, {color.a:0.###}f)", new GUILayoutOption[]{});
+                EditorGUILayout.TextField("Result (Color)", $"new Color({color.r:0.###}f, {color.g:0.###}f, {color.b:0.###}f, {color.a:0.###}f)");
                 EditorGUILayout.TextField("Result (Color32)",
-                    $"new Color32({Mathf.RoundToInt(color.r * 255f)}, {Mathf.RoundToInt(color.g * 255f)}, {Mathf.RoundToInt(color.b * 255f)}, {Mathf.RoundToInt(color.a * 255f)})",
-                    new GUILayoutOption[] { });
+                    $"new Color32({Mathf.RoundToInt(color.r * 255f)}, {Mathf.RoundToInt(color.g * 255f)}, {Mathf.RoundToInt(color.b * 255f)}, {Mathf.RoundToInt(color.a * 255f)})");
+            }
+        } else {
+            if (int.TryParse(_rValue, out var r) && int.TryParse(_gValue, out var g) &&
+                int.TryParse(_bValue, out var b)) {
+                var color = new Color32((byte)r, (byte)g, (byte)b, 255);
+                EditorGUILayout.ColorField("Color", color);
+                var hex = ColorUtility.ToHtmlStringRGB(color);
+                EditorGUILayout.TextField("Result (Hex)", hex);
             }
         }
 
